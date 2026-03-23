@@ -138,12 +138,60 @@
         </el-descriptions>
       </div>
     </el-dialog>
+    
+    <!-- 新增/编辑店铺弹窗 -->
+    <el-dialog
+      :title="isEdit ? '编辑店铺' : '新增店铺'"
+      v-model="shopFormVisible"
+      width="600px"
+    >
+      <el-form :model="shopForm" :rules="shopRules" ref="shopFormRef" label-width="120px">
+        <el-form-item label="店铺名称" prop="name">
+          <el-input v-model="shopForm.name" placeholder="请输入店铺名称" />
+        </el-form-item>
+        <el-form-item label="平台" prop="platform">
+          <el-select v-model="shopForm.platform" placeholder="请选择平台">
+            <el-option label="Amazon" value="Amazon" />
+            <el-option label="Temu" value="Temu" />
+            <el-option label="AliExpress" value="AliExpress" />
+            <el-option label="Shopee" value="Shopee" />
+            <el-option label="Lazada" value="Lazada" />
+            <el-option label="TikTok Shop" value="TikTok" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="站点" prop="site">
+          <el-input v-model="shopForm.site" placeholder="请输入站点" />
+        </el-form-item>
+        <el-form-item label="店铺URL" prop="url">
+          <el-input v-model="shopForm.url" placeholder="请输入店铺URL" />
+        </el-form-item>
+        <el-form-item label="联系人" prop="contact">
+          <el-input v-model="shopForm.contact" placeholder="请输入联系人" />
+        </el-form-item>
+        <el-form-item label="联系邮箱" prop="email">
+          <el-input v-model="shopForm.email" type="email" placeholder="请输入联系邮箱" />
+        </el-form-item>
+        <el-form-item label="联系电话" prop="phone">
+          <el-input v-model="shopForm.phone" placeholder="请输入联系电话" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="shopForm.remark" type="textarea" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="shopFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleSaveShop">保存</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { Search, Plus, Check, Close, Delete, Download } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
 // 搜索表单
 const searchForm = reactive({
@@ -211,6 +259,49 @@ const selectedShops = ref<any[]>([])
 const shopDetailVisible = ref(false)
 const currentShop = ref<any>(null)
 
+// 新增/编辑店铺
+const shopFormVisible = ref(false)
+const isEdit = ref(false)
+const shopFormRef = ref()
+const shopForm = reactive({
+  id: '',
+  name: '',
+  platform: '',
+  site: '',
+  url: '',
+  contact: '',
+  email: '',
+  phone: '',
+  remark: ''
+})
+
+const shopRules = {
+  name: [
+    { required: true, message: '请输入店铺名称', trigger: 'blur' },
+    { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
+  ],
+  platform: [
+    { required: true, message: '请选择平台', trigger: 'change' }
+  ],
+  site: [
+    { required: true, message: '请输入站点', trigger: 'blur' }
+  ],
+  url: [
+    { required: true, message: '请输入店铺URL', trigger: 'blur' },
+    { type: 'url', message: '请输入正确的URL格式', trigger: 'blur' }
+  ],
+  contact: [
+    { required: true, message: '请输入联系人', trigger: 'blur' }
+  ],
+  email: [
+    { required: true, message: '请输入联系邮箱', trigger: 'blur' },
+    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+  ],
+  phone: [
+    { required: true, message: '请输入联系电话', trigger: 'blur' }
+  ]
+}
+
 // 搜索
 const search = () => {
   // 实现搜索逻辑
@@ -234,7 +325,19 @@ const handleSelectionChange = (val: any[]) => {
 
 // 新增店铺
 const addShop = () => {
-  console.log('新增店铺')
+  isEdit.value = false
+  Object.assign(shopForm, {
+    id: '',
+    name: '',
+    platform: '',
+    site: '',
+    url: '',
+    contact: '',
+    email: '',
+    phone: '',
+    remark: ''
+  })
+  shopFormVisible.value = true
 }
 
 // 批量授权
@@ -281,7 +384,52 @@ const viewShop = (shop: any) => {
 
 // 编辑店铺
 const editShop = (shop: any) => {
-  console.log('编辑店铺:', shop)
+  isEdit.value = true
+  Object.assign(shopForm, {
+    id: shop.id,
+    name: shop.name,
+    platform: shop.platform,
+    site: shop.site,
+    url: shop.url,
+    contact: shop.contact,
+    email: shop.email,
+    phone: shop.phone,
+    remark: shop.remark
+  })
+  shopFormVisible.value = true
+}
+
+// 保存店铺
+const handleSaveShop = () => {
+  if (shopFormRef.value) {
+    shopFormRef.value.validate((valid: boolean) => {
+      if (valid) {
+        if (isEdit.value) {
+          // 编辑店铺
+          const index = shops.value.findIndex(shop => shop.id === shopForm.id)
+          if (index !== -1) {
+            shops.value[index] = {
+              ...shops.value[index],
+              ...shopForm
+            }
+            ElMessage.success('店铺编辑成功')
+          }
+        } else {
+          // 新增店铺
+          const newShop = {
+            ...shopForm,
+            id: Date.now().toString(),
+            status: 'unauthorized',
+            authorizeDate: '',
+            expiryDate: ''
+          }
+          shops.value.unshift(newShop)
+          ElMessage.success('店铺新增成功')
+        }
+        shopFormVisible.value = false
+      }
+    })
+  }
 }
 
 // 切换状态
