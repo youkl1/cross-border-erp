@@ -14,7 +14,7 @@ export const useUserStore = defineStore('user', {
       username: 'admin',
       role: 'admin',
       permissions: ['all']
-    } as UserInfo,
+    } as UserInfo | null,
     token: 'mock-token',
     currentShop: null as {
       id: string

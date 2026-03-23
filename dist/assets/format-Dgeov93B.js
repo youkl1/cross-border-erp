@@ -1,0 +1,1 @@
+const n=(t,a={})=>{const{decimals:e=2,thousandsSeparator:o=",",decimalSeparator:s=".",prefix:c="",suffix:i=""}=a,r=t.toFixed(e).split(".");return r[0]=r[0].replace(/\B(?=(\d{3})+(?!\d))/g,o),`${c}${r.join(s)}${i}`};export{n as f};

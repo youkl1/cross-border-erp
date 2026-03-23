@@ -172,7 +172,7 @@ const searchForm = reactive({
 })
 
 const userForm = reactive({
-  id: '',
+  id: 0,
   username: '',
   name: '',
   email: '',
@@ -219,7 +219,7 @@ const resetForm = () => {
 const handleAddUser = () => {
   isEdit.value = false
   Object.assign(userForm, {
-    id: '',
+    id: 0,
     username: '',
     name: '',
     email: '',

@@ -356,8 +356,8 @@ const saveWarehouse = () => {
   } else {
     // 新增仓库
     const newWarehouse = {
-      id: Date.now().toString(),
       ...warehouseForm,
+      id: Date.now().toString(),
       createdAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
     }
     warehouses.value.unshift(newWarehouse)

@@ -145,7 +145,7 @@ const searchForm = reactive({
 })
 
 const workflowForm = reactive({
-  id: '',
+  id: 0,
   name: '',
   description: '',
   status: '1'
@@ -177,7 +177,7 @@ const resetForm = () => {
 const handleAddWorkflow = () => {
   isEdit.value = false
   Object.assign(workflowForm, {
-    id: '',
+    id: 0,
     name: '',
     description: '',
     status: '1'

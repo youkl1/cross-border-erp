@@ -423,11 +423,16 @@ const saveProduct = () => {
   } else {
     // 新增商品
     const newProduct = {
-      id: Date.now().toString(),
       ...productForm,
+      id: Date.now().toString(),
       createdAt: new Date().toISOString().slice(0, 19).replace('T', ' '),
       languageInfo: [],
-      compliance: {},
+      compliance: {
+        asin: '',
+        hsCode: '',
+        customsElements: '',
+        certifications: ''
+      },
       warehouseMapping: []
     }
     products.value.unshift(newProduct)

@@ -112,7 +112,7 @@ const isEdit = ref(false)
 const roleFormRef = ref()
 
 const roleForm = reactive({
-  id: '',
+  id: 0,
   name: '',
   description: '',
   permissions: []
@@ -132,7 +132,7 @@ const roleRules = {
 const handleAddRole = () => {
   isEdit.value = false
   Object.assign(roleForm, {
-    id: '',
+    id: 0,
     name: '',
     description: '',
     permissions: []
@@ -169,8 +169,7 @@ const handleSaveRole = () => {
             roles.value[index] = {
               ...roles.value[index],
               name: roleForm.name,
-              description: roleForm.description,
-              permissions: roleForm.permissions
+              description: roleForm.description
             }
           }
         } else {
